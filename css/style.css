@@ -195,3 +195,7 @@ a{color:inherit;text-decoration:none}.container{max-width:1180px;margin:0 auto;p
 .step-screenshot-caption{margin:10px auto 0;width:min(100%,920px);color:var(--muted);font-size:14px;font-weight:700;line-height:1.65}
 .step-screenshot-block .note,.step-screenshot-block .warn,.step-screenshot-plain .note,.step-screenshot-plain .warn{margin:14px 0 16px}
 @media(max-width:680px){.step-screenshot-block{padding:16px}.step-screenshot-plain{margin-top:20px}.step-screenshot-title{font-size:20px!important}.step-screenshot-image{border-radius:14px}}
+
+/* v17 STEP7 free build hints */
+.free-build-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:20px 0}
+.free-build-grid .info-box{box-shadow:4px 5px 0 rgba(49,75,54,.06)}
