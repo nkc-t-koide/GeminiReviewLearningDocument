@@ -175,3 +175,44 @@ a{color:inherit;text-decoration:none}.container{max-width:1180px;margin:0 auto;p
 .result-image-checks{width:min(100%,980px)}
 .result-section .note .list-check{margin:12px 0 0}
 @media(max-width:680px){.result-card{padding:18px}.result-image-comment,.result-image-checks{width:100%}}
+
+/* v15 STEP7 branch flow */
+.placeholder-figure{margin:18px 20px 20px}
+.placeholder-figure .image-placeholder{margin:0;min-height:190px}
+.placeholder-figure figcaption{margin-top:9px;color:var(--muted);font-size:14px;font-weight:700}
+.branch-name{display:inline-flex;max-width:100%;margin:8px 0 18px;padding:14px 16px;border:2px solid var(--line);border-radius:18px;background:#fffaf0;box-shadow:4px 5px 0 rgba(49,75,54,.07)}
+.branch-name code{font-size:18px;white-space:normal;word-break:break-word}
+.note p,.warn p{margin:6px 0 0}
+@media(max-width:680px){.placeholder-figure{margin:16px 0}.placeholder-figure .image-placeholder{min-height:150px}.branch-name code{font-size:15px}}
+
+/* v16 STEP7 SourceTree screenshots */
+.step-screenshot-block{margin:24px 0;padding:20px;border:2px solid var(--line);border-radius:24px;background:#fffaf0;box-shadow:6px 7px 0 rgba(49,75,54,.06)}
+.step-screenshot-plain{margin:24px 0 6px}
+.step-screenshot-title{margin:0 0 8px!important;color:var(--green-dark);font-size:23px!important;line-height:1.3}
+.step-screenshot-desc{margin:0 0 16px;color:var(--muted);font-size:16px;font-weight:650;line-height:1.75}
+.step-screenshot-image{display:block;width:min(100%,920px);max-width:100%;height:auto;margin:16px auto 0;border:2px solid rgba(215,195,159,.95);border-radius:18px;background:#fff;box-shadow:0 14px 28px rgba(71,54,24,.12)}
+.step-screenshot-image.is-compact{width:100%;max-width:520px;margin-inline:auto}
+.step-screenshot-caption{margin:10px auto 0;width:min(100%,920px);color:var(--muted);font-size:14px;font-weight:700;line-height:1.65}
+.step-screenshot-block .note,.step-screenshot-block .warn,.step-screenshot-plain .note,.step-screenshot-plain .warn{margin:14px 0 16px}
+@media(max-width:680px){.step-screenshot-block{padding:16px}.step-screenshot-plain{margin-top:20px}.step-screenshot-title{font-size:20px!important}.step-screenshot-image{border-radius:14px}}
+
+/* v17 STEP7 free build hints */
+.free-build-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:20px 0}
+.free-build-grid .info-box{box-shadow:4px 5px 0 rgba(49,75,54,.06)}
+
+/* v18 STEP7 sample game procedure */
+.sample-procedure-list{margin-top:26px}
+.procedure-step{padding:24px 0;border-top:2px solid rgba(215,195,159,.75)}
+.procedure-step:first-child{border-top:0;padding-top:4px}
+.procedure-step-heading{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.procedure-step-number{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--green);color:#fff;font-weight:900;box-shadow:3px 3px 0 rgba(49,75,54,.12);flex:0 0 auto}
+.procedure-step-title{margin:0!important;color:var(--green-dark);font-size:24px!important;line-height:1.3}
+.procedure-step p{margin:0 0 14px;color:var(--muted);font-weight:650;line-height:1.8}
+.procedure-step h4{margin:26px 0 10px;color:var(--green-dark);font-size:20px}
+.procedure-figure{margin:18px 0 4px}
+.procedure-image{display:block;width:min(100%,920px);max-width:100%;height:auto;margin:0 auto;border:2px solid rgba(215,195,159,.95);border-radius:18px;background:#fff;box-shadow:0 14px 28px rgba(71,54,24,.12)}
+.procedure-image.is-medium{width:100%;max-width:720px;margin-inline:auto}
+.procedure-figure figcaption{margin:10px auto 0;width:min(100%,920px);color:var(--muted);font-size:14px;font-weight:700;line-height:1.65}
+.procedure-placeholder-box{display:grid;place-items:center;min-height:190px;border:2px dashed var(--line);border-radius:18px;background:linear-gradient(135deg,rgba(255,248,233,.92),rgba(237,242,223,.62));color:var(--green-dark);font-weight:900}
+.code-block-large{max-height:560px;overflow:auto}
+@media(max-width:680px){.procedure-step-heading{align-items:flex-start}.procedure-step-title{font-size:21px!important}.procedure-placeholder-box{min-height:140px}.code-block-large{max-height:460px}}

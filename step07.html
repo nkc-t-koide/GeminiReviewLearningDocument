@@ -1,6 +1,234 @@
-<!doctype html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>STEP 7 | PRを作って動作確認する</title><link rel="stylesheet" href="css/style.css"></head><body>
-<header class="header"><div class="container topbar"><div><a class="backlink" href="./">← トップへ戻る</a><div class="breadcrumbs">STEP 7 / 7</div></div><div class="logo">AI PRレビュー講座<small>GitHub Actions + Gemini API</small></div></div></header>
-<main class="container"><div class="page-title"><span class="label">STEP 7</span><h1>PRを作って動作確認する</h1><p>実際にPull Requestを作成し、GitHub Actions が動いてAIレビューコメントが投稿されるか確認します。</p><div class="progress"><a class="" href="step01.html">1</a><a class="" href="step02.html">2</a><a class="" href="step03.html">3</a><a class="" href="step04.html">4</a><a class="" href="step05.html">5</a><a class="" href="step06.html">6</a><a class="current" href="step07.html">7</a></div></div>
-<section class="section result-section"><h2>PRで実行確認する</h2><p class="lead">ここまでの設定を使ってPull Requestを作成し、AIレビューが動くか確認します。</p><div class="info-grid"><div class="info-box"><strong>PRを作成する</strong>Pull Requestを作ると、GitHub Actionsが起動します。</div><div class="info-box"><strong>AIレビューコメントを確認する</strong>ConversationにAIレビュー結果が投稿されているか見ます。</div><div class="info-box"><strong>Workflowの成功を確認する</strong>ChecksでAI PR Reviewが成功しているか確認します。</div></div><div class="result-flow"><article class="result-card"><h3>AIレビューコメントを確認する</h3><p>PRのConversationに、github-actions bot からAIレビューコメントが投稿されていれば成功です。Summary、Critical、Major、Minor などの形式でレビュー結果が表示されます。</p><img class="result-image result-image-comment" src="assets/step7-ai-review-comment.png" alt="GitHub Actions bot がPull RequestにAIレビューコメントを投稿している画面"></article><article class="result-card"><h3>Workflowの成功を確認する</h3><p>PR画面のChecksで、AI PR Review が成功していることを確認します。All checks have passed と表示されていれば、Workflowは正常に完了しています。</p><img class="result-image result-image-checks" src="assets/step7-checks-passed.png" alt="GitHub Pull RequestでAI PR Reviewのチェックが成功している画面"></article></div><div class="note"><strong>確認するポイント</strong><ul class="list-check"><li>AI PR Review のチェックが成功している</li><li>github-actions bot からコメントが投稿されている</li><li>コメントの中に Summary / Critical / Major / Minor / Good Points / Questions が表示されている</li><li>beginner / normal / pro でレビューの内容や深さが変わっている</li></ul></div></section>
-<section class="section"><h2>AIレビューコメントが投稿されないとき</h2><p class="lead">Workflowが成功しているのにPRコメントが投稿されない場合は、GitHub Actions の権限設定を確認します。</p><ol class="list-check"><li>リポジトリの Settings を開く</li><li>Actions → General を開く</li><li>Workflow permissions を確認する</li><li>「読み取りおよび書き込み権限」を選択する</li><li>Save を押す</li></ol><div class="warn"><strong>補足：</strong> この設定が読み取り専用のままだと、<code>GITHUB_TOKEN</code> がPRにコメントを投稿できず、<code>GitHub API status: 403</code> になることがあります。</div></section>
-<div class="nav-footer"><a class="btn" href="step06.html">← 戻る</a><a class="btn primary" href="./">トップへ戻る →</a></div></main><div class="footer">AI PRレビュー講座</div><script src="js/main.js"></script></body></html>
+<!doctype html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>STEP 7 | Git Flowでレビュー用ブランチを作る</title><link rel="stylesheet" href="css/style.css"></head><body>
+<header class="header"><div class="container topbar"><div><a class="backlink" href="./">← トップへ戻る</a><div class="breadcrumbs">STEP 7 / 8</div></div><div class="logo">AI PRレビュー講座<small>GitHub Actions + Gemini API</small></div></div></header>
+<main class="container"><div class="page-title"><span class="label">STEP 7</span><h1>Git Flowでレビュー用ブランチを作る</h1><p>AIレビューを動かすためのファイルをmainブランチに用意し、SourceTreeのGit Flowでdevelopとfeatureブランチを作成します。</p><div class="progress"><a class="" href="step01.html">1</a><a class="" href="step02.html">2</a><a class="" href="step03.html">3</a><a class="" href="step04.html">4</a><a class="" href="step05.html">5</a><a class="" href="step06.html">6</a><a class="current" href="step07.html">7</a><a class="" href="step08.html">8</a></div></div>
+<section class="section"><h2>mainブランチにAIレビュー用ファイルを用意する</h2><p class="lead">まず、AIレビューを動かすために必要な3つのファイルをmainブランチにコミットします。</p><div class="info-grid"><div class="info-box"><strong><code>.github/workflows/ai-review.yml</code></strong>GitHub Actionsの設定ファイルです。</div><div class="info-box"><strong><code>scripts/ai_review.py</code></strong>Gemini APIを呼び出すAIレビュー処理です。</div><div class="info-box"><strong><code>review_rules/review_policy.md</code></strong>AIに渡すレビュー条件です。</div></div><p class="lead">この3つは、AIレビューを実行するための土台です。ymlはGitHub Actionsの設定、pyはAIレビュー処理、mdはレビュー条件を表します。</p><pre><code>repo/
+├─ .github/
+│  └─ workflows/
+│     └─ ai-review.yml
+├─ scripts/
+│  └─ ai_review.py
+└─ review_rules/
+   └─ review_policy.md</code></pre><div class="step-screenshot-block"><h3 class="step-screenshot-title">AIレビュー用ファイルをコミットしてpushする</h3><p class="step-screenshot-desc"><code>.github/workflows/ai-review.yml</code>、<code>scripts/ai_review.py</code>、<code>review_rules/review_policy.md</code> をステージに追加し、コミットしてからpushします。<br>この3つのファイルが、以降のdevelopブランチやfeatureブランチにも引き継がれます。</p><img class="step-screenshot-image" src="assets/step7-main-commit-ai-files.png" alt="SourceTreeでAIレビュー用ファイルをコミットしてmainブランチへpushする画面"><p class="step-screenshot-caption">AIレビューに必要な yml / py / md ファイルをSourceTreeでコミットし、mainブランチへpushする画面です。</p></div><div class="note"><strong>ポイント：先にmainへ入れておく</strong><p>AIレビューを動かすためのファイルは、先にmainブランチへコミットしておきます。その後にGit Flowでdevelopやfeatureブランチを作成すると、これらのファイルを引き継いだ状態で作業できます。</p></div></section>
+<section class="section"><h2>SourceTreeでGit Flowを開始する</h2><p class="lead">SourceTreeのGit Flow機能を使って、mainブランチからdevelopブランチを作成します。</p><ul class="list-check"><li>SourceTreeでリポジトリを開く</li><li>Git Flowを初期化する</li><li>developブランチが作成される</li><li>以後の開発はdevelopを起点に行う</li></ul><div class="step-screenshot-plain"><h3 class="step-screenshot-title">Git Flowを初期化する</h3><p class="step-screenshot-desc">SourceTree右上の Git Flow を押し、Git Flowを初期化します。<br>製品ブランチは <code>main</code>、開発ブランチは <code>develop</code> に設定します。<br>設定できたら OK を押します。</p><div class="warn"><strong>注意：</strong> 製品ブランチが <code>master</code> になっている場合は、<code>main</code> に変更してください。</div><img class="step-screenshot-image" src="assets/step7-gitflow-init.png" alt="SourceTreeでGit Flowを初期化し、製品ブランチをmain、開発ブランチをdevelopに設定する画面"><p class="step-screenshot-caption">SourceTreeのGit Flow初期化画面です。製品ブランチをmain、開発ブランチをdevelopにしてOKを押します。</p></div></section>
+<section class="section"><h2>フィーチャーブランチを作成する</h2><p class="lead">developブランチから、レビュー実験用のフィーチャーブランチを作成します。今回は、初心者向けレビュー条件を試すために <code>feature/beginner</code> を作成します。</p><div class="branch-name"><code>feature/beginner</code></div><div class="note"><strong>補足：</strong> SourceTreeのGit Flowでは、入力したフィーチャー名に <code>feature/</code> が付いたブランチが作成されます。今回はフィーチャー名に <code>beginner</code> と入力します。</div><p class="lead">このfeatureブランチで、AIレビュー対象になるシューティングゲームのコードを作成します。</p><div class="step-screenshot-block"><h3 class="step-screenshot-title">新規フィーチャーを開始する</h3><p class="step-screenshot-desc">developブランチを選択していることを確認し、SourceTree右上の Git Flow を押します。<br>表示されたメニューから「新規フィーチャーを開始」を選択します。</p><img class="step-screenshot-image" src="assets/step7-gitflow-start-feature.png" alt="SourceTreeでdevelopブランチを選択し、Git Flowから新規フィーチャーを開始する画面"></div><div class="step-screenshot-block"><h3 class="step-screenshot-title">featureブランチ名を入力する</h3><p class="step-screenshot-desc">フィーチャー名に <code>beginner</code> と入力します。<br>SourceTreeでは、接頭辞 <code>feature/</code> が付くため、作成されるブランチ名は <code>feature/beginner</code> になります。</p><img class="step-screenshot-image" src="assets/step7-gitflow-feature-name.png" alt="SourceTreeでfeatureブランチ名を入力して新規フィーチャーを作成する画面"></div></section>
+<section class="section"><h2>作成したブランチをpushして確認する</h2><p class="lead">ローカルで作成した <code>develop</code> ブランチと <code>feature/beginner</code> ブランチを、GitHub上にもpushします。push後、GitHubのブランチ一覧に <code>develop</code> と <code>feature/beginner</code> が表示されていれば成功です。</p><div class="step-screenshot-block"><h3 class="step-screenshot-title">developとfeatureブランチをpushする</h3><p class="step-screenshot-desc">SourceTreeの「プッシュ」を押し、<code>develop</code> と <code>feature/beginner</code> にチェックを入れてpushします。<br>リモートブランチとしてGitHubに登録されるよう、追跡のチェックも確認します。</p><div class="warn"><strong>注意：push対象を確認する</strong><p><code>develop</code> と <code>feature/beginner</code> にチェックが入っていることを確認してからpushします。mainはすでにpush済みの場合、無理に再pushする必要はありません。</p></div><img class="step-screenshot-image" src="assets/step7-push-branches.png" alt="SourceTreeでdevelopブランチとfeature/beginnerブランチをGitHubへpushする画面"><p class="step-screenshot-caption">developとfeature/beginnerブランチにチェックを入れ、GitHubへpushします。</p></div><div class="step-screenshot-block"><h3 class="step-screenshot-title">GitHub上にブランチが作られたか確認する</h3><p class="step-screenshot-desc">GitHubのブランチ切り替えメニューを開き、<code>develop</code> と <code>feature/beginner</code> が表示されているか確認します。<br>表示されていれば、SourceTreeからGitHubへのpushは成功です。</p><img class="step-screenshot-image is-compact" src="assets/step7-github-branch-list.png" alt="GitHubのブランチ一覧にmain、develop、feature/beginnerが表示されている画面"><p class="step-screenshot-caption">GitHub上にdevelopとfeature/beginnerが表示されていれば成功です。</p></div></section>
+<section class="section"><h2>beginnerブランチでシューティングゲームを作成する</h2><p class="lead"><code>feature/beginner</code> ブランチ上で、DxLibを使った簡単なシューティングゲームを作成してみましょう。<br>プレイヤー、敵、弾、スコア、当たり判定など、どんな構成にするかは自由です。</p><div class="info-grid free-build-grid"><div class="info-box"><strong>プレイヤーを動かす</strong>キー入力で左右に移動できるようにします。</div><div class="info-box"><strong>弾を撃つ</strong>ボタン入力でプレイヤー弾を発射します。</div><div class="info-box"><strong>敵を出す</strong>画面上に敵を表示し、簡単に移動させます。</div><div class="info-box"><strong>当たり判定を使う</strong>弾と敵、敵弾とプレイヤーの当たり判定を確認します。</div></div><p class="lead">ここで作成したコードが、次のSTEPでAIレビューの対象になります。<br>あえて命名規則を確認しやすいコードにしたり、クラスや関数をいくつか作ったりすると、AIレビューの結果を比較しやすくなります。</p><div class="note"><strong>このコードをAIレビューに使います</strong><p>このSTEPで作成したシューティングゲームのコードを、次のSTEPでPull Requestにします。<br>Pull Requestを作成すると、GitHub Actionsが動き、Gemini APIによるAIレビューコメントが投稿されます。</p></div><div class="warn"><strong>注意：レビュー結果を見るための実験です</strong><p>この教材では、AIレビューがどのような指摘をするかを確認することが目的です。<br>実際の開発では、危険な処理や分かりにくい命名をそのままにせず、レビュー結果をもとに修正していきましょう。</p></div></section>
+<section class="section sample-game-section"><h2>サンプルシューティングを動かす</h2><p class="lead">Teamsで配布されたサンプルファイルを使って、AIレビュー対象にするシューティングゲームを動かします。<br>ここで追加したコードを次のSTEPでPull Requestにし、AIレビューコメントを確認します。</p><div class="procedure-list sample-procedure-list">
+<article class="procedure-step"><div class="procedure-step-heading"><span class="procedure-step-number">1</span><h3 class="procedure-step-title">配布ファイルをダウンロードする</h3></div><p>事前にTeamsで配布された以下のファイルをダウンロードします。</p><ul class="list-check"><li><code>Game.zip</code></li><li><code>GameScene2D.h</code></li><li><code>GameScene2D.cpp</code></li></ul><div class="note"><strong>補足：</strong> <code>Game.zip</code> には、シューティングゲームで使う <code>Player</code>、<code>Enemy</code>、<code>Bullet</code> などのファイルが入っています。<br><code>GameScene2D.h</code> と <code>GameScene2D.cpp</code> は、ゲームシーン側からそれらのクラスを使うための差し替え用ファイルです。</div></article>
+<article class="procedure-step"><div class="procedure-step-heading"><span class="procedure-step-number">2</span><h3 class="procedure-step-title">Game.zip を解凍して src の中に入れる</h3></div><p><code>Game.zip</code> を解凍し、出てきた <code>Game</code> フォルダをプロジェクトの <code>src</code> フォルダの中に入れます。</p><pre><code>src/
+└─ Game/
+   ├─ Player.h
+   ├─ Player.cpp
+   ├─ Enemy1.h
+   ├─ Enemy1.cpp
+   ├─ Enemy2.h
+   ├─ Enemy2.cpp
+   ├─ PlayerBullet.h
+   ├─ PlayerBullet.cpp
+   ├─ EnemyBullet.h
+   └─ EnemyBullet.cpp</code></pre><figure class="procedure-figure"><img class="procedure-image is-medium" src="assets/step7-sample-game-copy-src.png" alt="Game.zipを解凍してsrcフォルダの中にGameフォルダを配置する画面"><figcaption>解凍した <code>Game</code> フォルダを、プロジェクトの <code>src</code> フォルダの中に入れます。</figcaption></figure></article>
+<article class="procedure-step"><div class="procedure-step-heading"><span class="procedure-step-number">3</span><h3 class="procedure-step-title">Visual Studioで既存の項目を追加する</h3></div><p><code>.sln</code> ファイルを開き、Visual Studioのソリューションエクスプローラーで <code>src</code> を右クリックします。<br>メニューから「追加」→「既存の項目」を選択します。</p><figure class="procedure-figure"><img class="procedure-image" src="assets/step7-sample-game-add-existing-item.png" alt="Visual Studioでsrcを右クリックし、追加から既存の項目を選ぶ画面"><figcaption><code>src</code> を右クリックし、「追加」→「既存の項目」を選択します。</figcaption></figure></article>
+<article class="procedure-step"><div class="procedure-step-heading"><span class="procedure-step-number">4</span><h3 class="procedure-step-title">src/Game 以下のファイルをすべて追加する</h3></div><p><code>src/Game</code> フォルダの中にある <code>.h</code> と <code>.cpp</code> をすべて選択し、「追加」を押します。<br>これで、Visual Studioのプロジェクトにサンプルシューティング用のファイルが登録されます。</p><figure class="procedure-figure"><img class="procedure-image" src="assets/step7-sample-game-select-files.png" alt="Visual Studioでsrc/Game以下のファイルをすべて選択して追加する画面"><figcaption><code>src/Game</code> 以下のファイルをすべて選択し、「追加」を押します。</figcaption></figure></article>
+<article class="procedure-step"><div class="procedure-step-heading"><span class="procedure-step-number">5</span><h3 class="procedure-step-title">GameScene2D.h / cpp を上書きする</h3></div><p>配布された <code>GameScene2D.h</code> と <code>GameScene2D.cpp</code> の内容で、既存の同名ファイルを上書きします。<br>この2つのファイルでは、<code>src/Game</code> に追加した <code>Player</code>、<code>Enemy1</code>、<code>Enemy2</code>、<code>PlayerBullet</code>、<code>EnemyBullet</code> を使ってゲームを動かします。</p><div class="warn"><strong>注意：上書き前に確認する</strong><p>既存の <code>GameScene2D.h</code> と <code>GameScene2D.cpp</code> に自分で変更を加えている場合は、上書き前にバックアップしておきましょう。</p></div><h4>GameScene2D.h</h4><pre class="code-block-large"><code class="language-cpp">#pragma once
+
+#include "BaseScene.h"
+
+#include "../Game/Enemy1.h"
+#include "../Game/Enemy2.h"
+#include "../Game/EnemyBullet.h"
+#include "../Game/Player.h"
+#include "../Game/PlayerBullet.h"
+
+#include &lt;array&gt;
+
+/**
+ * @brief ゲーム本編を表すシーンクラスです。
+ */
+class GameScene2D : public BaseScene
+{
+public:
+    /**
+     * @brief ゲームシーンを生成します。
+     * @param sceneManager シーン遷移を依頼する先のマネージャーです。
+     * @return なし。
+     */
+    explicit GameScene2D( SceneManager* sceneManager );
+
+    /**
+     * @brief ゲームシーンを破棄します。
+     * @return なし。
+     */
+    ~GameScene2D() override;
+
+    /**
+     * @brief ゲームシーンの初期化を行います。
+     * @return なし。
+     */
+    void Init() override;
+
+    /**
+     * @brief ゲームシーンの更新処理を行います。
+     * @return なし。
+     */
+    void Update() override;
+
+    /**
+     * @brief ゲームシーンの描画処理を行います。
+     * @return なし。
+     */
+    void Draw() override;
+
+private:
+    Player player_;
+    Enemy1 enemy1_;
+    Enemy2 enemy2_;
+    std::array&lt;PlayerBullet, maxBulletCount&gt; playerBullets_;
+    std::array&lt;EnemyBullet, 24&gt; enemyBullets_;
+    int score_;
+    int enemy2HpMirror_;
+};</code></pre><h4>GameScene2D.cpp</h4><pre class="code-block-large"><code class="language-cpp">#include "GameScene2D.h"
+
+#include "../Input/InputManager.h"
+#include "SceneManager.h"
+
+#include &lt;DxLib.h&gt;
+
+static bool IsHit( float ax, float ay, int aw, float bx, float by, int bw )
+{
+    return ax &lt; bx + bw &amp;&amp; ax + aw &gt; bx &amp;&amp; ay &lt; by + bw &amp;&amp; ay + aw &gt; by;
+}
+
+GameScene2D::GameScene2D( SceneManager* sceneManager )
+    : BaseScene( sceneManager )
+    , score_( 0 )
+    , enemy2HpMirror_( 0 )
+{
+}
+
+GameScene2D::~GameScene2D() = default;
+
+void GameScene2D::Init()
+{
+    score_ = 0;
+    enemy2HpMirror_ = 4;
+
+    player_.Init();
+    enemy1_.Init( 210.0f, 80.0f );
+    enemy2_.Init( 850.0f, 120.0f );
+    enemy2_.SetExternalHp( &amp;enemy2HpMirror_ );
+
+    for (int i = 0; i &lt; maxBulletCount; ++i)
+    {
+        playerBullets_[i].Deactivate();
+    }
+
+    for (int i = 0; i &lt; static_cast&lt;int&gt;( enemyBullets_.size() ); ++i)
+    {
+        enemyBullets_[i].Deactivate();
+        enemyBullets_[i].SetTarget( player_.GetXAddress() );
+    }
+}
+
+void GameScene2D::Update()
+{
+    player_.update( playerBullets_.data(), static_cast&lt;int&gt;( playerBullets_.size() ) );
+    enemy1_.update( enemyBullets_.data(), static_cast&lt;int&gt;( enemyBullets_.size() ) );
+    enemy2_.update( enemyBullets_.data(), static_cast&lt;int&gt;( enemyBullets_.size() ) );
+
+    for (int i = 0; i &lt; static_cast&lt;int&gt;( playerBullets_.size() ); ++i)
+    {
+        playerBullets_[i].update();
+    }
+
+    for (int i = 0; i &lt; static_cast&lt;int&gt;( enemyBullets_.size() ); ++i)
+    {
+        enemyBullets_[i].update();
+    }
+
+    for (int i = 0; i &lt; static_cast&lt;int&gt;( playerBullets_.size() ); ++i)
+    {
+        if (!playerBullets_[i].IsActive())
+        {
+            continue;
+        }
+
+        if (enemy1_.IsAlive() &amp;&amp; IsHit(
+            playerBullets_[i].GetX(),
+            playerBullets_[i].GetY(),
+            playerBullets_[i].GetSize(),
+            enemy1_.GetX(),
+            enemy1_.GetY(),
+            enemy1_.GetSize() ))
+        {
+            enemy1_.Damage( 1 );
+            playerBullets_[i].Deactivate();
+            score_ += 10;
+        }
+
+        if (enemy2_.IsAlive() &amp;&amp; playerBullets_[i].IsActive() &amp;&amp; IsHit(
+            playerBullets_[i].GetX(),
+            playerBullets_[i].GetY(),
+            playerBullets_[i].GetSize(),
+            enemy2_.GetX(),
+            enemy2_.GetY(),
+            enemy2_.GetSize() ))
+        {
+            enemy2_.Damage( 1 );
+            playerBullets_[i].Deactivate();
+            score_ += 20;
+        }
+    }
+
+    for (int i = 0; i &lt; static_cast&lt;int&gt;( enemyBullets_.size() ); ++i)
+    {
+        if (enemyBullets_[i].IsActive() &amp;&amp; player_.IsAlive() &amp;&amp; IsHit(
+            enemyBullets_[i].GetX(),
+            enemyBullets_[i].GetY(),
+            enemyBullets_[i].GetSize(),
+            player_.GetX(),
+            player_.GetY(),
+            player_.GetSize() ))
+        {
+            player_.Damage( 1 );
+            enemyBullets_[i].Deactivate();
+        }
+    }
+
+    if (InputManager::GetInstance().IsKeyPressed( KEY_INPUT_RETURN ))
+    {
+        sceneManager_-&gt;ChangeScene( SceneID::Result );
+    }
+}
+
+void GameScene2D::Draw()
+{
+    DrawString( 10, 10, "Arrow keys: move  Space/Z: shot  Enter: result", GetColor( 255, 255, 255 ) );
+    DrawFormatString( 10, 58, GetColor( 255, 255, 255 ), "Score: %d", score_ );
+
+    enemy1_.draw();
+    enemy2_.draw();
+
+    for (int i = 0; i &lt; static_cast&lt;int&gt;( playerBullets_.size() ); ++i)
+    {
+        playerBullets_[i].draw();
+    }
+
+    for (int i = 0; i &lt; static_cast&lt;int&gt;( enemyBullets_.size() ); ++i)
+    {
+        enemyBullets_[i].draw();
+    }
+
+    player_.draw();
+
+    if (!player_.IsAlive())
+    {
+        DrawString( 560, 350, "PLAYER DOWN", GetColor( 255, 64, 64 ) );
+    }
+}</code></pre></article>
+<article class="procedure-step"><div class="procedure-step-heading"><span class="procedure-step-number">6</span><h3 class="procedure-step-title">ビルドして実行する</h3></div><p>ファイルを追加できたら、Visual Studioでビルドして実行します。<br>シューティングゲームの画面が表示され、プレイヤー移動や弾の発射ができれば成功です。</p><ul class="list-check"><li>矢印キー：プレイヤー移動</li><li>Space / Z：弾を撃つ</li><li>Enter：リザルト画面へ移動</li></ul><figure class="procedure-figure"><img class="procedure-image" src="assets/step7-sample-game-run.png" alt="Visual StudioでビルドしてDxLibのシューティングゲームを実行している画面"><figcaption>ビルドして実行し、シューティングゲームが動くことを確認します。</figcaption></figure></article>
+<article class="procedure-step"><div class="procedure-step-heading"><span class="procedure-step-number">7</span><h3 class="procedure-step-title">サンプルシューティングをコミットしてpushする</h3></div><p>シューティングゲームが動作したら、追加・変更したファイルをコミットし、<code>feature/beginner</code> ブランチをGitHubへpushします。<br>このコミットが、次のSTEPでPull Requestを作るための元になります。</p><div class="tip"><strong>補足：</strong> この時点では、AIレビュー用のPull Requestはまだ作成しません。<br>まずは <code>feature/beginner</code> ブランチに変更をpushできていることを確認します。</div><figure class="procedure-figure"><img class="procedure-image" src="assets/step7-sample-game-commit-push.png" alt="SourceTreeでサンプルシューティングをコミットしてfeature/beginnerブランチをpushする画面"><figcaption>変更したファイルをコミットし、<code>feature/beginner</code> ブランチをGitHubへpushします。</figcaption></figure></article>
+</div><div class="tip"><strong>この変更を次のSTEPでPull Requestにします</strong><p>サンプルシューティングを動かし、<code>feature/beginner</code> ブランチにコミットしてpushできたら準備完了です。<br>次のSTEPでは、<code>feature/beginner</code> からPull Requestを作成し、AIレビューコメントを確認します。</p></div></section>
+<section class="section"><h2>ここまでのブランチ構成</h2><p class="lead">STEP7の最後では、以下のようなブランチ構成になります。</p><pre><code>main
+└─ develop
+   └─ feature/beginner</code></pre><div class="info-grid"><div class="info-box"><strong>main</strong>AIレビュー用ファイルがあります。</div><div class="info-box"><strong>develop</strong>開発の起点です。</div><div class="info-box"><strong>feature/beginner</strong>AIレビュー対象のシューティングゲーム実装があります。</div></div></section>
+<div class="nav-footer"><a class="btn" href="step06.html">← 戻る</a><a class="btn primary" href="step08.html">次へ →</a></div></main><div class="footer">AI PRレビュー講座</div><script src="js/main.js"></script></body></html>
